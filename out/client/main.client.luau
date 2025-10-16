@@ -102,7 +102,7 @@ local function createOrientationWarning()
 	message.Size = UDim2.fromScale(0.8, 0.3)
 	message.Position = UDim2.fromScale(0.1, 0.35)
 	message.BackgroundTransparency = 1
-	message.Text = "please rotate to landscape ⟲"
+	message.Text = "please rotate to landscape 🙏"
 	message.TextColor3 = Color3.fromRGB(40, 40, 40)
 	message.TextScaled = true
 	message.Font = Enum.Font.GothamBold
