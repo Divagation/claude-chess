@@ -22,7 +22,7 @@ export class GameUI {
 		this.moveHistoryFrame = new Instance("Frame") as Frame;
 		this.moveHistoryFrame.Name = "MoveHistory";
 		this.moveHistoryFrame.Size = UDim2.fromScale(0.15, 0.2);
-		this.moveHistoryFrame.Position = UDim2.fromScale(0.02, 0.15);
+		this.moveHistoryFrame.Position = UDim2.fromScale(0.02, 0.24);
 		this.moveHistoryFrame.BackgroundTransparency = 1;
 		this.moveHistoryFrame.BorderSizePixel = 0;
 		this.moveHistoryFrame.Parent = this.screenGui;
@@ -61,8 +61,8 @@ export class GameUI {
 		// Create back button - top left corner (door emoji) - positioned below Roblox top bar
 		const backButton = new Instance("TextButton") as TextButton;
 		backButton.Name = "BackButton";
-		backButton.Size = UDim2.fromScale(0.08, 0.08);
-		backButton.Position = UDim2.fromScale(0.02, 0.06);
+		backButton.Size = UDim2.fromScale(0.1, 0.1);
+		backButton.Position = UDim2.fromScale(0.02, 0.12);
 		backButton.BackgroundTransparency = 1;
 		backButton.BorderSizePixel = 0;
 		backButton.Text = "🚪";
