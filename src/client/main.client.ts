@@ -1,9 +1,10 @@
 import { ParkEnvironment } from "../shared/parkEnvironment";
+import { MobileControls } from "./mobileControls";
 
 declare const workspace: Workspace;
 
 // Remove player character
-const players = game.GetService("Players");
+const players = game.GetService("Players") as Players;
 const player = players.LocalPlayer;
 
 if (player && player.Character) {
@@ -11,9 +12,11 @@ if (player && player.Character) {
 }
 
 // Disable character spawning
-player.CharacterAdded.Connect((character: Model) => {
-	character.Destroy();
-});
+if (player) {
+	player.CharacterAdded.Connect((character: Model) => {
+		character.Destroy();
+	});
+}
 
 // Create park environment
 const parkEnvironment = new ParkEnvironment();
@@ -22,6 +25,9 @@ const parkEnvironment = new ParkEnvironment();
 const camera = workspace.CurrentCamera as Camera;
 const UserInputService = game.GetService("UserInputService");
 const RunService = game.GetService("RunService");
+
+// Mobile controls instance
+let mobileControls: MobileControls | undefined;
 
 // Board parameters
 const boardCenterX = 8;
@@ -62,12 +68,12 @@ UserInputService.InputEnded.Connect((input: InputObject) => {
 });
 
 RunService.RenderStepped.Connect(() => {
-	// Handle camera rotation
+	// Handle camera rotation (faster speed)
 	if (isRotatingRight) {
-		cameraAngle += 2;
+		cameraAngle += 4;
 	}
 	if (isRotatingLeft) {
-		cameraAngle -= 2;
+		cameraAngle -= 4;
 	}
 
 	// Handle zoom
@@ -90,7 +96,54 @@ RunService.RenderStepped.Connect(() => {
 	camera.CFrame = new CFrame(cameraPosition, lookAtPosition);
 });
 
+// Platform detection and mobile controls setup
+function setupMobileControls(): void {
+	// Debug logging
+	print("🔍 Platform Detection Debug:");
+	print(`TouchEnabled: ${UserInputService.TouchEnabled}`);
+	print(`KeyboardEnabled: ${UserInputService.KeyboardEnabled}`);
+	print(`MouseEnabled: ${UserInputService.MouseEnabled}`);
+
+	// Check if user is on a mobile device
+	const isMobileDevice = UserInputService.TouchEnabled &&
+						  !UserInputService.KeyboardEnabled &&
+						  !UserInputService.MouseEnabled;
+
+	// Also check for tablets (touch enabled but may have keyboard/mouse)
+	const isTablet = UserInputService.TouchEnabled &&
+						(UserInputService.KeyboardEnabled || UserInputService.MouseEnabled);
+
+	print(`isMobileDevice: ${isMobileDevice}`);
+	print(`isTablet: ${isTablet}`);
+
+	// Only show mobile controls on touch-enabled devices
+	if (UserInputService.TouchEnabled) {
+		mobileControls = new MobileControls({
+			onRotateLeft: () => {
+				cameraAngle -= 4;
+			},
+			onRotateRight: () => {
+				cameraAngle += 4;
+			},
+			onZoomIn: () => {
+				cameraDistance = math.max(10, cameraDistance - 0.5);
+			},
+			onZoomOut: () => {
+				cameraDistance = math.min(30, cameraDistance + 0.5);
+			}
+		});
+
+		print("✓ Mobile controls enabled");
+	}
+}
+
+// Wait for player to be fully loaded before setting up controls
+if (player) {
+	player.CharacterAdded.Wait();
+}
+setupMobileControls();
+
 print("✓ Character removed");
 print("✓ Camera setup complete");
-print("✓ Use A/D to rotate camera");
-print("✓ Use W/S to zoom in/out");
+print("✓ Desktop: Use A/D to rotate camera, W/S to zoom");
+print("✓ Mobile: Use on-screen buttons or touch gestures");

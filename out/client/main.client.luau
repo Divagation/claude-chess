@@ -1,6 +1,7 @@
 -- Compiled with roblox-ts v3.0.0
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
 local ParkEnvironment = TS.import(script, game:GetService("ReplicatedStorage"), "ChessGame", "shared", "parkEnvironment").ParkEnvironment
+local MobileControls = TS.import(script, script.Parent, "mobileControls").MobileControls
 -- Remove player character
 local players = game:GetService("Players")
 local player = players.LocalPlayer
@@ -8,15 +9,19 @@ if player and player.Character then
 	player.Character:Destroy()
 end
 -- Disable character spawning
-player.CharacterAdded:Connect(function(character)
-	character:Destroy()
-end)
+if player then
+	player.CharacterAdded:Connect(function(character)
+		character:Destroy()
+	end)
+end
 -- Create park environment
 local parkEnvironment = ParkEnvironment.new()
 -- Set up camera focused on chess board
 local camera = workspace.CurrentCamera
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+-- Mobile controls instance
+local mobileControls
 -- Board parameters
 local boardCenterX = 8
 local boardCenterZ = 8
@@ -52,12 +57,12 @@ UserInputService.InputEnded:Connect(function(input)
 	end
 end)
 RunService.RenderStepped:Connect(function()
-	-- Handle camera rotation
+	-- Handle camera rotation (faster speed)
 	if isRotatingRight then
-		cameraAngle += 2
+		cameraAngle += 4
 	end
 	if isRotatingLeft then
-		cameraAngle -= 2
+		cameraAngle -= 4
 	end
 	-- Handle zoom
 	if isZoomingIn then
@@ -75,7 +80,44 @@ RunService.RenderStepped:Connect(function()
 	local lookAtPosition = Vector3.new(boardCenterX, boardCenterY, boardCenterZ)
 	camera.CFrame = CFrame.new(cameraPosition, lookAtPosition)
 end)
+-- Platform detection and mobile controls setup
+local function setupMobileControls()
+	-- Debug logging
+	print("🔍 Platform Detection Debug:")
+	print(`TouchEnabled: {UserInputService.TouchEnabled}`)
+	print(`KeyboardEnabled: {UserInputService.KeyboardEnabled}`)
+	print(`MouseEnabled: {UserInputService.MouseEnabled}`)
+	-- Check if user is on a mobile device
+	local isMobileDevice = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled and not UserInputService.MouseEnabled
+	-- Also check for tablets (touch enabled but may have keyboard/mouse)
+	local isTablet = UserInputService.TouchEnabled and (UserInputService.KeyboardEnabled or UserInputService.MouseEnabled)
+	print(`isMobileDevice: {isMobileDevice}`)
+	print(`isTablet: {isTablet}`)
+	-- Only show mobile controls on touch-enabled devices
+	if UserInputService.TouchEnabled then
+		mobileControls = MobileControls.new({
+			onRotateLeft = function()
+				cameraAngle -= 4
+			end,
+			onRotateRight = function()
+				cameraAngle += 4
+			end,
+			onZoomIn = function()
+				cameraDistance = math.max(10, cameraDistance - 0.5)
+			end,
+			onZoomOut = function()
+				cameraDistance = math.min(30, cameraDistance + 0.5)
+			end,
+		})
+		print("✓ Mobile controls enabled")
+	end
+end
+-- Wait for player to be fully loaded before setting up controls
+if player then
+	player.CharacterAdded:Wait()
+end
+setupMobileControls()
 print("✓ Character removed")
 print("✓ Camera setup complete")
-print("✓ Use A/D to rotate camera")
-print("✓ Use W/S to zoom in/out")
+print("✓ Desktop: Use A/D to rotate camera, W/S to zoom")
+print("✓ Mobile: Use on-screen buttons or touch gestures")
