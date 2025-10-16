@@ -90,7 +90,8 @@ do
 		button.BorderColor3 = normalColor
 		button.Text = text
 		button.TextColor3 = normalColor
-		button.TextScaled = true
+		button.TextScaled = false
+		button.TextSize = 20
 		button.Font = Enum.Font.GothamBold
 		button.AutoButtonColor = false
 		-- Hover effects - minimalist style with border only

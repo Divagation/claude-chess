@@ -33,11 +33,11 @@ export class UpdatesMenu {
 		contentContainer.BorderSizePixel = 0;
 		contentContainer.Parent = this.screenGui;
 
-		// Back button (door emoji)
+		// Back button (door emoji) - positioned below Roblox top bar
 		const backButton = new Instance("TextButton") as TextButton;
 		backButton.Name = "BackButton";
-		backButton.Size = UDim2.fromScale(0.06, 0.06);
-		backButton.Position = UDim2.fromScale(0.02, 0.08);
+		backButton.Size = UDim2.fromScale(0.08, 0.08);
+		backButton.Position = UDim2.fromScale(0.02, 0.06);
 		backButton.BackgroundTransparency = 1;
 		backButton.BorderSizePixel = 0;
 		backButton.Text = "🚪";

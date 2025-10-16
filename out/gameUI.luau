@@ -25,7 +25,7 @@ do
 		self.moveHistoryFrame = Instance.new("Frame")
 		self.moveHistoryFrame.Name = "MoveHistory"
 		self.moveHistoryFrame.Size = UDim2.fromScale(0.15, 0.2)
-		self.moveHistoryFrame.Position = UDim2.fromScale(0.02, 0.08)
+		self.moveHistoryFrame.Position = UDim2.fromScale(0.02, 0.15)
 		self.moveHistoryFrame.BackgroundTransparency = 1
 		self.moveHistoryFrame.BorderSizePixel = 0
 		self.moveHistoryFrame.Parent = self.screenGui
@@ -58,11 +58,11 @@ do
 		self.gameStateLabel.Font = Enum.Font.GothamBold
 		self.gameStateLabel.Visible = false
 		self.gameStateLabel.Parent = self.screenGui
-		-- Create back button - top left corner (door emoji)
+		-- Create back button - top left corner (door emoji) - positioned below Roblox top bar
 		local backButton = Instance.new("TextButton")
 		backButton.Name = "BackButton"
-		backButton.Size = UDim2.fromScale(0.06, 0.06)
-		backButton.Position = UDim2.fromScale(0.02, 0.02)
+		backButton.Size = UDim2.fromScale(0.08, 0.08)
+		backButton.Position = UDim2.fromScale(0.02, 0.06)
 		backButton.BackgroundTransparency = 1
 		backButton.BorderSizePixel = 0
 		backButton.Text = "🚪"
