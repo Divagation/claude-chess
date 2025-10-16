@@ -143,22 +143,36 @@ export class BoardRenderer {
 		const pieceKey = `piece-${row}-${col}`;
 		const x = col * SQUARE_SIZE;
 		const z = row * SQUARE_SIZE;
-		const baseY = BOARD_Y_POSITION + 0.2; // Raise pieces to sit on top of board squares (square height is 0.2)
+		const baseY = BOARD_Y_POSITION + 0.2;
 
-		// Always recreate the piece to avoid cache issues
+		// Check if piece already exists and matches current piece
 		const existingPiece = this.pieceParts.get(pieceKey);
-		if (existingPiece) {
-			existingPiece.Destroy();
-			this.pieceParts.delete(pieceKey);
+		if (existingPiece && existingPiece.Name === `${piece.color}_${piece.type}`) {
+			// Piece exists and hasn't changed - just update position if needed
+			const primaryPart = existingPiece.PrimaryPart;
+			if (primaryPart) {
+				const currentX = primaryPart.Position.X;
+				const currentZ = primaryPart.Position.Z;
+
+				// Only update position if piece actually moved
+				if (math.abs(currentX - x) > 0.01 || math.abs(currentZ - z) > 0.01) {
+					const offsetY = primaryPart.Position.Y - currentX; // Calculate offset from base
+					existingPiece.SetPrimaryPartCFrame(new CFrame(x, baseY + offsetY, z));
+				}
+			}
+			return; // Piece already exists and positioned correctly
 		}
 
-		// Create a Model for each piece to contain multiple parts
+		// Piece doesn't exist or changed type - create new one
+		if (existingPiece) {
+			existingPiece.Destroy();
+		}
+
 		const pieceModel = new Instance("Model") as Model;
 		pieceModel.Name = `${piece.color}_${piece.type}`;
 		pieceModel.Parent = this.boardContainer;
 		this.pieceParts.set(pieceKey, pieceModel);
 
-		// Set piece color
 		const pieceColor = piece.color === "white" ? Color3.fromRGB(255, 255, 255) : Color3.fromRGB(0, 0, 0);
 		switch (piece.type) {
 			case "pawn":
@@ -180,7 +194,6 @@ export class BoardRenderer {
 				this.createKing(pieceModel, x, z, baseY, pieceColor);
 				break;
 		}
-
 
 		// Add click detector to the main part of the piece
 		const primaryPart = pieceModel.PrimaryPart || pieceModel.FindFirstChildWhichIsA("Part");

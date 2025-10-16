@@ -132,18 +132,30 @@ do
 		local x = col * SQUARE_SIZE
 		local z = row * SQUARE_SIZE
 		local baseY = BOARD_Y_POSITION + 0.2
-		-- Always recreate the piece to avoid cache issues
+		-- Check if piece already exists and matches current piece
 		local existingPiece = self.pieceParts[pieceKey]
+		if existingPiece and existingPiece.Name == `{piece.color}_{piece.type}` then
+			-- Piece exists and hasn't changed - just update position if needed
+			local primaryPart = existingPiece.PrimaryPart
+			if primaryPart then
+				local currentX = primaryPart.Position.X
+				local currentZ = primaryPart.Position.Z
+				-- Only update position if piece actually moved
+				if math.abs(currentX - x) > 0.01 or math.abs(currentZ - z) > 0.01 then
+					local offsetY = primaryPart.Position.Y - currentX
+					existingPiece:SetPrimaryPartCFrame(CFrame.new(x, baseY + offsetY, z))
+				end
+			end
+			return nil
+		end
+		-- Piece doesn't exist or changed type - create new one
 		if existingPiece then
 			existingPiece:Destroy()
-			self.pieceParts[pieceKey] = nil
 		end
-		-- Create a Model for each piece to contain multiple parts
 		local pieceModel = Instance.new("Model")
 		pieceModel.Name = `{piece.color}_{piece.type}`
 		pieceModel.Parent = self.boardContainer
 		self.pieceParts[pieceKey] = pieceModel
-		-- Set piece color
 		local pieceColor = if piece.color == "white" then Color3.fromRGB(255, 255, 255) else Color3.fromRGB(0, 0, 0)
 		local _exp = piece.type
 		repeat
