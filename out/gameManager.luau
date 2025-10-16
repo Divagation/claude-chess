@@ -1,8 +1,8 @@
 -- Compiled with roblox-ts v3.0.0
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
-local ChessBoard = TS.import(script, game:GetService("ServerScriptService"), "Shared", "board").ChessBoard
-local BoardRenderer = TS.import(script, game:GetService("ServerScriptService"), "Shared", "renderer").BoardRenderer
-local ChessAI = TS.import(script, game:GetService("ServerScriptService"), "Shared", "ai").ChessAI
+local ChessBoard = TS.import(script, game:GetService("ReplicatedStorage"), "ChessGame", "board").ChessBoard
+local BoardRenderer = TS.import(script, game:GetService("ReplicatedStorage"), "ChessGame", "renderer").BoardRenderer
+local ChessAI = TS.import(script, game:GetService("ReplicatedStorage"), "ChessGame", "ai").ChessAI
 -- Global reference for click handlers
 local currentGameManager
 local function selectSquareGlobal(row, col)

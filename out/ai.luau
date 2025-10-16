@@ -1,6 +1,6 @@
 -- Compiled with roblox-ts v3.0.0
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
-local ChessBoard = TS.import(script, game:GetService("ServerScriptService"), "Shared", "board").ChessBoard
+local ChessBoard = TS.import(script, game:GetService("ReplicatedStorage"), "ChessGame", "board").ChessBoard
 local MAX_VALUE = 999999
 local MIN_VALUE = -999999
 local ChessAI

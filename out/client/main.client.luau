@@ -1,4 +1,6 @@
 -- Compiled with roblox-ts v3.0.0
+local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
+local ParkEnvironment = TS.import(script, game:GetService("ReplicatedStorage"), "ChessGame", "shared", "parkEnvironment").ParkEnvironment
 -- Remove player character
 local players = game:GetService("Players")
 local player = players.LocalPlayer
@@ -9,6 +11,8 @@ end
 player.CharacterAdded:Connect(function(character)
 	character:Destroy()
 end)
+-- Create park environment
+local parkEnvironment = ParkEnvironment.new()
 -- Set up camera focused on chess board
 local camera = workspace.CurrentCamera
 local UserInputService = game:GetService("UserInputService")

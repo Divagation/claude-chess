@@ -6,15 +6,18 @@
       "$className": "ReplicatedStorage",
       "rbxts_include": {
         "$path": "include"
+      },
+      "Shared": {
+        "$path": "out/shared"
+      },
+      "ChessGame": {
+        "$path": "out"
       }
     },
     "ServerScriptService": {
       "$className": "ServerScriptService",
       "Server": {
         "$path": "out/server"
-      },
-      "Shared": {
-        "$path": "out"
       }
     },
     "StarterPlayer": {

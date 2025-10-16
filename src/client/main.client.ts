@@ -1,3 +1,5 @@
+import { ParkEnvironment } from "../shared/parkEnvironment";
+
 declare const workspace: Workspace;
 
 // Remove player character
@@ -12,6 +14,9 @@ if (player && player.Character) {
 player.CharacterAdded.Connect((character: Model) => {
 	character.Destroy();
 });
+
+// Create park environment
+const parkEnvironment = new ParkEnvironment();
 
 // Set up camera focused on chess board
 const camera = workspace.CurrentCamera as Camera;

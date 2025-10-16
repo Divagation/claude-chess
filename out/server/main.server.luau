@@ -1,6 +1,6 @@
 -- Compiled with roblox-ts v3.0.0
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
-local GameManager = TS.import(script, game:GetService("ServerScriptService"), "Shared", "gameManager").GameManager
+local GameManager = TS.import(script, game:GetService("ReplicatedStorage"), "ChessGame", "gameManager").GameManager
 -- Remove baseplate and spawn locations
 local workspace = game:GetService("Workspace")
 -- Remove baseplate
