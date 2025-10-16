@@ -1,0 +1,23 @@
+{
+  "name": "roblox-chess",
+  "version": "1.0.0",
+  "description": "A chess game for Roblox",
+  "main": "out/index.js",
+  "scripts": {
+    "build": "rbxtsc",
+    "watch": "rbxtsc -w",
+    "serve": "rojo serve"
+  },
+  "keywords": [
+    "roblox",
+    "chess",
+    "game"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@rbxts/compiler-types": "^3.0.0-types.0",
+    "@rbxts/types": "^1.0.0",
+    "roblox-ts": "^3.0.0"
+  }
+}
