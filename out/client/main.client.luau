@@ -2,6 +2,7 @@
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
 local ParkEnvironment = TS.import(script, game:GetService("ReplicatedStorage"), "ChessGame", "shared", "parkEnvironment").ParkEnvironment
 local MobileControls = TS.import(script, script.Parent, "mobileControls").MobileControls
+local GameManager = TS.import(script, game:GetService("ReplicatedStorage"), "ChessGame", "gameManager").GameManager
 -- Remove player character
 local players = game:GetService("Players")
 local player = players.LocalPlayer
@@ -108,8 +109,14 @@ local function setupMobileControls()
 			onZoomOut = function()
 				cameraDistance = math.min(30, cameraDistance + 0.5)
 			end,
+			onRotateDelta = function(delta)
+				cameraAngle += delta
+			end,
+			onZoomDelta = function(delta)
+				cameraDistance = math.clamp(cameraDistance + delta, 10, 30)
+			end,
 		})
-		print("✓ Mobile controls enabled")
+		print("✓ Mobile controls enabled (swipe and pinch gestures)")
 	end
 end
 -- Wait for player to be fully loaded before setting up controls
@@ -121,3 +128,7 @@ print("✓ Character removed")
 print("✓ Camera setup complete")
 print("✓ Desktop: Use A/D to rotate camera, W/S to zoom")
 print("✓ Mobile: Use on-screen buttons or touch gestures")
+-- Initialize the chess game on client side
+local gameManager = GameManager.new()
+gameManager:startGame()
+print("✓ Chess game started on client")

@@ -1,6 +1,4 @@
 -- Compiled with roblox-ts v3.0.0
-local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
-local GameManager = TS.import(script, game:GetService("ReplicatedStorage"), "ChessGame", "gameManager").GameManager
 -- Remove baseplate and spawn locations
 local workspace = game:GetService("Workspace")
 -- Remove baseplate
@@ -30,8 +28,5 @@ for _, child in existingChessBoards do
 		child:Destroy()
 	end
 end
--- Start the game
-local gameManager = GameManager.new()
-gameManager:startGame()
-print("✓ Baseplate and spawn location removed")
-print("✓ Chess game started")
+print("✓ Server: Baseplate and spawn location removed")
+print("✓ Server: Waiting for client to start game")

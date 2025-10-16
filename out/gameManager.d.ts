@@ -3,10 +3,14 @@ export declare class GameManager {
     private board;
     private renderer;
     private ai;
+    private ui;
     private gameRunning;
+    private lastMoveFrom;
+    private lastMoveTo;
     constructor();
     private updateDisplay;
     selectSquare(row: number, col: number): void;
+    private coordinatesToNotation;
     private makeAIMove;
     startGame(): void;
     stopGame(): void;

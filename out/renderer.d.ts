@@ -15,6 +15,12 @@ export declare class BoardRenderer {
         col: number;
     } | undefined): void;
     private renderPiece;
+    private createPawn;
+    private createRook;
+    private createKnight;
+    private createBishop;
+    private createQueen;
+    private createKing;
     highlightValidMoves(validMoves: {
         row: number;
         col: number;

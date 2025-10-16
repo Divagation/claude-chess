@@ -1,5 +1,6 @@
 import { ParkEnvironment } from "../shared/parkEnvironment";
 import { MobileControls } from "./mobileControls";
+import { GameManager } from "../gameManager";
 
 declare const workspace: Workspace;
 
@@ -130,10 +131,16 @@ function setupMobileControls(): void {
 			},
 			onZoomOut: () => {
 				cameraDistance = math.min(30, cameraDistance + 0.5);
+			},
+			onRotateDelta: (delta: number) => {
+				cameraAngle += delta;
+			},
+			onZoomDelta: (delta: number) => {
+				cameraDistance = math.clamp(cameraDistance + delta, 10, 30);
 			}
 		});
 
-		print("✓ Mobile controls enabled");
+		print("✓ Mobile controls enabled (swipe and pinch gestures)");
 	}
 }
 
@@ -147,3 +154,8 @@ print("✓ Character removed");
 print("✓ Camera setup complete");
 print("✓ Desktop: Use A/D to rotate camera, W/S to zoom");
 print("✓ Mobile: Use on-screen buttons or touch gestures");
+
+// Initialize the chess game on client side
+const gameManager = new GameManager();
+gameManager.startGame();
+print("✓ Chess game started on client");

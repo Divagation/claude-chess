@@ -1,5 +1,3 @@
-import { GameManager } from "../gameManager";
-
 // Remove baseplate and spawn locations
 const workspace = game.GetService("Workspace");
 
@@ -34,9 +32,5 @@ for (const child of existingChessBoards) {
 	}
 }
 
-// Start the game
-const gameManager = new GameManager();
-gameManager.startGame();
-
-print("✓ Baseplate and spawn location removed");
-print("✓ Chess game started");
+print("✓ Server: Baseplate and spawn location removed");
+print("✓ Server: Waiting for client to start game");
