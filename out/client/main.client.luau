@@ -3,6 +3,7 @@ local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_incl
 local ParkEnvironment = TS.import(script, game:GetService("ReplicatedStorage"), "ChessGame", "shared", "parkEnvironment").ParkEnvironment
 local MobileControls = TS.import(script, script.Parent, "mobileControls").MobileControls
 local GameManager = TS.import(script, game:GetService("ReplicatedStorage"), "ChessGame", "gameManager").GameManager
+local MainMenu = TS.import(script, game:GetService("ReplicatedStorage"), "ChessGame", "mainMenu").MainMenu
 -- Remove player character
 local players = game:GetService("Players")
 local player = players.LocalPlayer
@@ -81,6 +82,55 @@ RunService.RenderStepped:Connect(function()
 	local lookAtPosition = Vector3.new(boardCenterX, boardCenterY, boardCenterZ)
 	camera.CFrame = CFrame.new(cameraPosition, lookAtPosition)
 end)
+-- Landscape orientation overlay
+local orientationOverlay
+local function createOrientationWarning()
+	local players = game:GetService("Players")
+	local player = players.LocalPlayer
+	local playerGui = player:WaitForChild("PlayerGui")
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "OrientationWarning"
+	gui.ResetOnSpawn = false
+	gui.IgnoreGuiInset = true
+	gui.Parent = playerGui
+	local background = Instance.new("Frame")
+	background.Size = UDim2.fromScale(1, 1)
+	background.BackgroundColor3 = Color3.fromRGB(240, 235, 220)
+	background.BorderSizePixel = 0
+	background.Parent = gui
+	local message = Instance.new("TextLabel")
+	message.Size = UDim2.fromScale(0.8, 0.3)
+	message.Position = UDim2.fromScale(0.1, 0.35)
+	message.BackgroundTransparency = 1
+	message.Text = "please rotate to landscape ⟲"
+	message.TextColor3 = Color3.fromRGB(40, 40, 40)
+	message.TextScaled = true
+	message.Font = Enum.Font.GothamBold
+	message.TextWrapped = true
+	message.Parent = background
+	return gui
+end
+local function isPortraitMode()
+	local screenSize = camera.ViewportSize
+	return screenSize.Y > screenSize.X
+end
+local function checkOrientation()
+	if not UserInputService.TouchEnabled then
+		return nil
+	end
+	if isPortraitMode() then
+		if not orientationOverlay then
+			orientationOverlay = createOrientationWarning()
+			print("⚠️  Portrait mode detected - showing landscape warning")
+		end
+	else
+		if orientationOverlay then
+			orientationOverlay:Destroy()
+			orientationOverlay = nil
+			print("✓ Landscape mode detected")
+		end
+	end
+end
 -- Platform detection and mobile controls setup
 local function setupMobileControls()
 	-- Debug logging
@@ -117,6 +167,10 @@ local function setupMobileControls()
 			end,
 		})
 		print("✓ Mobile controls enabled (swipe and pinch gestures)")
+		-- Check orientation periodically for mobile devices
+		game:GetService("RunService").Heartbeat:Connect(function()
+			checkOrientation()
+		end)
 	end
 end
 -- Wait for player to be fully loaded before setting up controls
@@ -128,7 +182,35 @@ print("✓ Character removed")
 print("✓ Camera setup complete")
 print("✓ Desktop: Use A/D to rotate camera, W/S to zoom")
 print("✓ Mobile: Use on-screen buttons or touch gestures")
--- Initialize the chess game on client side
-local gameManager = GameManager.new()
-gameManager:startGame()
-print("✓ Chess game started on client")
+-- Game manager reference
+local gameManager
+-- Function to reset and return to menu
+local mainMenu
+local function returnToMenu()
+	print("Returning to menu...")
+	if gameManager then
+		gameManager:stopGame()
+	end
+	mainMenu:show()
+end
+-- Function to start the game
+local function startChessGame()
+	print("Starting chess game...")
+	gameManager = GameManager.new()
+	-- Set callback to return to menu when game ends
+	gameManager:getUI():setOnGameEndCallback(function()
+		print("Game ended, returning to menu...")
+		returnToMenu()
+	end)
+	-- Set callback for back button
+	gameManager:getUI():setOnBackToMenuCallback(function()
+		returnToMenu()
+	end)
+	gameManager:startGame()
+	print("✓ Chess game started on client")
+end
+-- Create and show main menu
+mainMenu = MainMenu.new(function()
+	startChessGame()
+end)
+print("✓ Main menu displayed")

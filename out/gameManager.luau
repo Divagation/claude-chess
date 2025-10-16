@@ -34,6 +34,9 @@ do
 		currentGameManager = self
 		self:updateDisplay()
 	end
+	function GameManager:getUI()
+		return self.ui
+	end
 	function GameManager:updateDisplay()
 		local gameState = self.board:getGameState()
 		-- Check for checkmate

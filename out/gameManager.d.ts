@@ -1,3 +1,4 @@
+import { GameUI } from "./gameUI";
 export declare function selectSquareGlobal(row: number, col: number): void;
 export declare class GameManager {
     private board;
@@ -8,6 +9,7 @@ export declare class GameManager {
     private lastMoveFrom;
     private lastMoveTo;
     constructor();
+    getUI(): GameUI;
     private updateDisplay;
     selectSquare(row: number, col: number): void;
     private coordinatesToNotation;

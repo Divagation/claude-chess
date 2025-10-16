@@ -32,6 +32,10 @@ export class GameManager {
 		this.updateDisplay();
 	}
 
+	getUI(): GameUI {
+		return this.ui;
+	}
+
 	private updateDisplay(): void {
 		const gameState = this.board.getGameState();
 

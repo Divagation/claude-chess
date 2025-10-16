@@ -1,6 +1,7 @@
 import { ParkEnvironment } from "../shared/parkEnvironment";
 import { MobileControls } from "./mobileControls";
 import { GameManager } from "../gameManager";
+import { MainMenu } from "../mainMenu";
 
 declare const workspace: Workspace;
 
@@ -97,6 +98,64 @@ RunService.RenderStepped.Connect(() => {
 	camera.CFrame = new CFrame(cameraPosition, lookAtPosition);
 });
 
+// Landscape orientation overlay
+let orientationOverlay: ScreenGui | undefined;
+
+function createOrientationWarning(): ScreenGui {
+	const players = game.GetService("Players") as Players;
+	const player = players.LocalPlayer;
+	const playerGui = player.WaitForChild("PlayerGui") as PlayerGui;
+
+	const gui = new Instance("ScreenGui") as ScreenGui;
+	gui.Name = "OrientationWarning";
+	gui.ResetOnSpawn = false;
+	gui.IgnoreGuiInset = true;
+	gui.Parent = playerGui;
+
+	const background = new Instance("Frame") as Frame;
+	background.Size = UDim2.fromScale(1, 1);
+	background.BackgroundColor3 = Color3.fromRGB(240, 235, 220);
+	background.BorderSizePixel = 0;
+	background.Parent = gui;
+
+	const message = new Instance("TextLabel") as TextLabel;
+	message.Size = UDim2.fromScale(0.8, 0.3);
+	message.Position = UDim2.fromScale(0.1, 0.35);
+	message.BackgroundTransparency = 1;
+	message.Text = "please rotate to landscape ⟲";
+	message.TextColor3 = Color3.fromRGB(40, 40, 40);
+	message.TextScaled = true;
+	message.Font = Enum.Font.GothamBold;
+	message.TextWrapped = true;
+	message.Parent = background;
+
+	return gui;
+}
+
+function isPortraitMode(): boolean {
+	const screenSize = camera.ViewportSize;
+	return screenSize.Y > screenSize.X;
+}
+
+function checkOrientation(): void {
+	if (!UserInputService.TouchEnabled) {
+		return; // Only enforce on mobile/touch devices
+	}
+
+	if (isPortraitMode()) {
+		if (!orientationOverlay) {
+			orientationOverlay = createOrientationWarning();
+			print("⚠️  Portrait mode detected - showing landscape warning");
+		}
+	} else {
+		if (orientationOverlay) {
+			orientationOverlay.Destroy();
+			orientationOverlay = undefined;
+			print("✓ Landscape mode detected");
+		}
+	}
+}
+
 // Platform detection and mobile controls setup
 function setupMobileControls(): void {
 	// Debug logging
@@ -141,6 +200,11 @@ function setupMobileControls(): void {
 		});
 
 		print("✓ Mobile controls enabled (swipe and pinch gestures)");
+
+		// Check orientation periodically for mobile devices
+		game.GetService("RunService").Heartbeat.Connect(() => {
+			checkOrientation();
+		});
 	}
 }
 
@@ -155,7 +219,40 @@ print("✓ Camera setup complete");
 print("✓ Desktop: Use A/D to rotate camera, W/S to zoom");
 print("✓ Mobile: Use on-screen buttons or touch gestures");
 
-// Initialize the chess game on client side
-const gameManager = new GameManager();
-gameManager.startGame();
-print("✓ Chess game started on client");
+// Game manager reference
+let gameManager: GameManager | undefined;
+
+// Function to reset and return to menu
+function returnToMenu(): void {
+	print("Returning to menu...");
+	if (gameManager) {
+		gameManager.stopGame();
+	}
+	mainMenu.show();
+}
+
+// Function to start the game
+function startChessGame(): void {
+	print("Starting chess game...");
+	gameManager = new GameManager();
+
+	// Set callback to return to menu when game ends
+	gameManager.getUI().setOnGameEndCallback(() => {
+		print("Game ended, returning to menu...");
+		returnToMenu();
+	});
+
+	// Set callback for back button
+	gameManager.getUI().setOnBackToMenuCallback(() => {
+		returnToMenu();
+	});
+
+	gameManager.startGame();
+	print("✓ Chess game started on client");
+}
+
+// Create and show main menu
+const mainMenu = new MainMenu(() => {
+	startChessGame();
+});
+print("✓ Main menu displayed");
